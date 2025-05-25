@@ -1,7 +1,7 @@
 #ifndef COMMON_MACROS_H
 #define COMMON_MACROS_H
 
-#define SERVER_IP "192.168.100.16"
-#define SERVER_PORT "3490"
+#define SERVER_IP "FILL IN YOUR IP"
+#define SERVER_PORT "FILL IN YOUR PORT"
 
 #endif
