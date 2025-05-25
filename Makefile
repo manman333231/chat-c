@@ -1,46 +1,28 @@
-CC       := gcc
-CFLAGS   := -Wall -Wextra -pedantic -std=c11 -g -pthread
-INCLUDES := -Iinclude
+CC = gcc
+CFLAGS = -Wall -Wextra -Iinclude -Iinclude/common -Iinclude/server -Iinclude/client -pthread
+BUILD_DIR = build
 
-SRC_DIR  := src
-OBJ_DIR  := build
-BIN_DIR  := bin
+SRC_DIR = src
+CLIENT_SRC = $(SRC_DIR)/client/main.c $(SRC_DIR)/common/common_setup.c
+SERVER_SRC = $(SRC_DIR)/server/main.c $(SRC_DIR)/server/connection.c \
+             $(SRC_DIR)/server/formatter.c $(SRC_DIR)/server/server.c \
+             $(SRC_DIR)/server/server_setup.c $(SRC_DIR)/common/common_setup.c
 
-SERVER_SRC := $(wildcard $(SRC_DIR)/server/*.c)
-CLIENT_SRC := $(wildcard $(SRC_DIR)/client/*.c)
-COMMON_SRC := $(wildcard $(SRC_DIR)/common/*.c)
+CLIENT_BIN = $(BUILD_DIR)/client
+SERVER_BIN = $(BUILD_DIR)/server
 
-SERVER_SRC += $(COMMON_SRC)
-CLIENT_SRC += $(COMMON_SRC)
+all: $(CLIENT_BIN) $(SERVER_BIN)
 
-SERVER_OBJ := $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SERVER_SRC))
-CLIENT_OBJ := $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(CLIENT_SRC))
+$(CLIENT_BIN): $(CLIENT_SRC)
+	@mkdir -p $(BUILD_DIR)
+	$(CC) $(CFLAGS) -o $@ $^
 
-DEPFLAGS := -MMD -MP
-CFLAGS  += $(DEPFLAGS)
-
-SERVER_BIN := $(BIN_DIR)/server
-CLIENT_BIN := $(BIN_DIR)/client
-
-.PHONY: all server client clean
-all: $(SERVER_BIN) $(CLIENT_BIN)
-
-server: $(SERVER_BIN)
-client: $(CLIENT_BIN)
-
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
-	@mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
-
-$(SERVER_BIN): $(SERVER_OBJ)
-	@mkdir -p $(BIN_DIR)
-	$(CC) $(CFLAGS) $^ -o $@
-
-$(CLIENT_BIN): $(CLIENT_OBJ)
-	@mkdir -p $(BIN_DIR)
-	$(CC) $(CFLAGS) $^ -o $@
-
--include $(SERVER_OBJ:.o=.d) $(CLIENT_OBJ:.o=.d)
+$(SERVER_BIN): $(SERVER_SRC)
+	@mkdir -p $(BUILD_DIR)
+	$(CC) $(CFLAGS) -o $@ $^
 
 clean:
-	rm -rf $(OBJ_DIR) $(BIN_DIR)
+	rm -rf $(BUILD_DIR)
+
+.PHONY: all clean
+

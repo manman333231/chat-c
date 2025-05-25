@@ -3,7 +3,7 @@
 
 #include <netdb.h>
 
-void enable_reuse_address(int sockfd);
+void enable_reuse_addr(int sockfd);
 
 void bind_and_listen(int sockfd, struct addrinfo* res);
 

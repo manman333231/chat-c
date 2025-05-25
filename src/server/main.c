@@ -36,9 +36,9 @@ int main() {
 
         int cli_fd;
         socklen_t addr_size = (socklen_t) sizeof cli_addr;
-        if ((cli_fd = accept(serv_fd, &cli_addr, &size)) == -1) {
+        if ((cli_fd = accept(serv_fd, &cli_addr, &addr_size)) == -1) {
             perror("accept error");
-            continue'
+            continue;
         }
 
         client* cli = calloc(1, sizeof *cli);

@@ -25,7 +25,7 @@ void* routine(void* arg) {
 
     while (name_free(&cli, cli_data) == false) {
         if (get_name(&cli) == false) {
-            close(cli.sockfd);
+            close(cli.sock_fd);
             return NULL;
         }
     }
@@ -36,7 +36,7 @@ void* routine(void* arg) {
     char buffer[MAX_RECV];
     memset(buffer, 0, sizeof buffer);
 
-    accumulator recv_accum = calloc(1, sizeof *recv_accum);
+    accumulator *recv_accum = calloc(1, sizeof *recv_accum);
     if (recv_accum == NULL) {
         perror("calloc error");
         return NULL;
@@ -49,7 +49,7 @@ void* routine(void* arg) {
     }
 
     int bytes_recv;
-    while ((bytes_recv = recv(cli.sockfd, buffer, MAX_RECV, 0)) > 0) {
+    while ((bytes_recv = recv(cli.sock_fd, buffer, MAX_RECV, 0)) > 0) {
         if (recv_accum->accum_len + bytes_recv >= MAX_RECV) {
             perror("recv buffer overflow\n");
 
@@ -66,10 +66,10 @@ void* routine(void* arg) {
             recv_accum->accum[recv_accum->accum_len - 1] = '\0';
 
             format_response(recv_accum, resp, cli_data, &cli);
-            printf("command from %s: %s\n", cli.name, accum);
+            printf("command from %s: %s\n", cli.name, recv_accum->accum);
 
             serve_response(resp, cli_data, &cli);
-            printf("response to %s: %s\n", cli.name, );
+            printf("response to %s: %s\n", cli.name, resp->mesg);
             memset(resp, 0, sizeof *resp);
 
             memset(buffer, 0, sizeof buffer);
@@ -80,8 +80,8 @@ void* routine(void* arg) {
 
     free(recv_accum);
     free(resp);
-    close(cli.sockfd);
-    remove_client(% cli, cli_data);
+    close(cli.sock_fd);
+    remove_client(&cli, cli_data);
     return NULL;
 }
 
@@ -100,21 +100,21 @@ bool name_free(client* cli, clients_data* cli_data) {
 }
 
 bool get_name(client* cli) {
-    char* req == "whats your name?";
+    char* req = "whats your name?";
     if (send(cli->sock_fd, req, strlen(req), 0) == -1) {
         perror("send error\n");
         return false;
     }
 
-    int bytes_recv = recv(cli->sockfd, cli->name, sizeof cli->name, 0);
+    int bytes_recv = recv(cli->sock_fd, cli->name, sizeof cli->name, 0);
     if (bytes_recv <= 0) {
         perror("client disconnected while naming\n");
         return false;
     }
 
-    if (bytes_recv = sizeof cli->name && cli_name[bytes_recv - 1] != '\n') {
+    if ((bytes_recv = sizeof cli->name) && (cli->name[bytes_recv - 1] != '\n')) {
         req = "max name len 31 chars!\n";
-        if (send(cli->sockfd, req, strlen(req), 0) == -1) {
+        if (send(cli->sock_fd, req, strlen(req), 0) == -1) {
             perror("send error\n");
             return false;
         }
@@ -132,7 +132,7 @@ bool add_client(client* cli, clients_data* cli_data) {
         pthread_mutex_unlock(&cli_data->lock);
     } else {
         char* req = "server full try again later!\n";
-        if (send(cli->sockfd, req, strlen(req), 0) == -1) {
+        if (send(cli->sock_fd, req, strlen(req), 0) == -1) {
             pthread_mutex_unlock(&cli_data->lock);
             perror("send error");
             return false;

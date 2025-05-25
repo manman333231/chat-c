@@ -7,7 +7,7 @@
 #include "server/server_macros.h"
 #include "server/server_setup.h"
 
-void enable_reuse_address(int sockfd) {
+void enable_reuse_addr(int sockfd) {
     int opt = 1;
     if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof opt) == -1) {
         perror("setsockopt error");

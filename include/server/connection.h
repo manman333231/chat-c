@@ -7,9 +7,9 @@
 
 void* routine(void* arg);
 
-bool name_is_free(client* cli, clients_data* cli_data);
+bool name_free(client* cli, clients_data* cli_data);
 
-bool get_user_name(client* cli);
+bool get_name(client* cli);
 
 bool add_client(client* cli, clients_data* cli_data);
 

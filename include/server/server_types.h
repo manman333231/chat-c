@@ -7,7 +7,7 @@
 #include "server/server_macros.h"
 
 typedef struct {
-    int sockfd;
+    int sock_fd;
     struct sockaddr addr;
     char name[MAX_NAME];
 } client;
