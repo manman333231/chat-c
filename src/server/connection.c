@@ -36,7 +36,7 @@ void* routine(void* arg) {
     char buffer[MAX_RECV];
     memset(buffer, 0, sizeof buffer);
 
-    accumulator *recv_accum = calloc(1, sizeof *recv_accum);
+    accumulator* recv_accum = calloc(1, sizeof *recv_accum);
     if (recv_accum == NULL) {
         perror("calloc error");
         return NULL;

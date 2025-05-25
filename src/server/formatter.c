@@ -67,7 +67,7 @@ void format_brdcst(accumulator* recv_accum, response* resp, client* cli) {
     resp->sock_fd = ALL;
 }
 
-void format_list(accumulator* recv_accum, response* resp, client *cli) {
+void format_list(accumulator* recv_accum, response* resp, client* cli) {
     if (recv_accum->accum[1] != '\0') {
         strcpy(resp->mesg, USAGE_ERROR_LIST);
         resp->sock_fd = cli->sock_fd;
