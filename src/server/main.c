@@ -23,34 +23,34 @@ int main() {
 
     freeaddrinfo(res);
 
-    clients_data *cli_data = calloc(1, sizeof *cli_data);
+    clients_data* cli_data = calloc(1, sizeof *cli_data);
     if (cli_data == NULL) {
         perror("calloc error");
         return 1;
     }
 
     pthread_mutex_init(&cli_data->lock, NULL);
-    while(1) {
+    while (1) {
         struct sockaddr cli_addr;
         memset(&cli_addr, 0, sizeof cli_addr);
 
         int cli_fd;
-        socklen_t addr_size = (socklen_t)sizeof cli_addr;
+        socklen_t addr_size = (socklen_t) sizeof cli_addr;
         if ((cli_fd = accept(serv_fd, &cli_addr, &size)) == -1) {
             perror("accept error");
             continue'
         }
 
-        client *cli = calloc(1, sizeof *cli);
+        client* cli = calloc(1, sizeof *cli);
         cli->sock_fd = cli_fd;
         cli->addr = cli_addr;
 
-        thread_arg * arg = calloc(1, sizeof *arg);
+        thread_arg* arg = calloc(1, sizeof *arg);
         arg->cli_data = cli_data;
         arg->cli = cli;
 
         pthread_t tid;
-        if (pthread_create(&tid, NULL, routine, (void*)arg) != 0 ) {
+        if (pthread_create(&tid, NULL, routine, (void*) arg) != 0) {
             perror("pthread_create error");
             return 1;
         }

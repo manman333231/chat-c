@@ -5,8 +5,7 @@
 #include "server/server_macros.h"
 #include "server/server_types.h"
 
-void format_respone(accumulator *recv_accum, response *resp, clients_data *cli_data, client *cli)
-{
+void format_respone(accumulator* recv_accum, response* resp, clients_data* cli_data, client* cli) {
     if (recv_accum->accum[0] == '\0' || recv_accum->accum[1] != ' ') {
         strcpy(resp->mesg, USAGE_ERROR_NONE);
         resp->sock_fd = cli->sock_fd;
@@ -34,8 +33,7 @@ void format_respone(accumulator *recv_accum, response *resp, clients_data *cli_d
     }
 }
 
-void format_mesg(accumulator *recv_accum, response *resp, clients_data *cli_data, client *cli)
-{
+void format_mesg(accumulator* recv_accum, response* resp, clients_data* cli_data, client* cli) {
     char dummy;
     char name[32], mesg[96];
     if (sscanf(recv_accum->accum, "%c %31s %95s", &dummy, name, mesg) < 3) {
@@ -56,8 +54,7 @@ void format_mesg(accumulator *recv_accum, response *resp, clients_data *cli_data
     resp->sock_fd = cli->sock_fd;
 }
 
-void format_brdcst(accumulator *recv_accum, response *resp, client *cli)
-{
+void format_brdcst(accumulator* recv_accum, response* resp, client* cli) {
     char dummy;
     char mesg[MAX_MESG];
     if (sscanf(recv_accum->accum, "%c %95s", &dummy, mesg) < 2) {
@@ -70,8 +67,7 @@ void format_brdcst(accumulator *recv_accum, response *resp, client *cli)
     resp->sock_fd = ALL;
 }
 
-void format_list(accumulator *accum, response *resp, client *cli)
-{
+void format_list(accumulator* accum, response* resp, client* cli) {
     if (recv_accum->accum[1] != '\0') {
         strcpy(resp->mesg, USAGE_ERROR_LIST);
         resp->sock_fd = cli->sock_fd;
@@ -82,8 +78,7 @@ void format_list(accumulator *accum, response *resp, client *cli)
     resp->sock_fd = cli->sock_fd;
 }
 
-void format_help(accumulator *accum, response *resp, client *cli)
-{
+void format_help(accumulator* accum, response* resp, client* cli) {
     if (recv_accum->accum[1] != '\0') {
         strcpy(resp->mesg, USAGE_ERROR_HELP);
         resp->sock_fd = cli->sock_fd;

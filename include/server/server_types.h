@@ -1,8 +1,8 @@
 #ifndef TYPES_H
 #define TYPES_H
 
-#include <sys/socket.h>
 #include <pthread.h>
+#include <sys/socket.h>
 
 #include "server/server_macros.h"
 
