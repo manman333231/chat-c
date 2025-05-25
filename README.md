@@ -5,4 +5,4 @@ m receiver content (for messaging),
 b content (for broadcasting),
 l (for list),
 h (for help).
-You must run ./server before running ./client code
+You must run ./server before running ./client code! Also fill in your server ip and port in the common_macros.h file!
