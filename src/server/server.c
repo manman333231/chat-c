@@ -10,10 +10,12 @@
 void serve_response(response* resp, clients_data* cli_data, client* cli) {
     if (strcmp(resp->mesg, LIST) == 0) {
         serve_list(resp, cli_data, cli);
+        return;
     }
 
     if (resp->sock_fd == ALL) {
         serve_brdcst(resp, cli_data, cli);
+        return;
     }
 
     for (int i = 0; i <= cli_data->count - 1; i++) {
@@ -32,7 +34,7 @@ void serve_list(response* resp, clients_data* cli_data, client* cli) {
     for (int i = 0; i <= cli_data->count - 1; i++) {
         if (resp->sock_fd == cli_data->clients[i]->sock_fd) {
             for (int j = 0; j <= cli_data->count - 1; j++) {
-                snprintf(resp->mesg, MAX_RESP, "[%d/%d] %31s", i + 1, cli_data->count, cli_data->clients[j]->name);
+                snprintf(resp->mesg, MAX_RESP, "[%d/%d] %s", j + 1, cli_data->count, cli_data->clients[j]->name);
                 pthread_mutex_lock(&cli_data->lock);
                 if (send(cli_data->clients[i]->sock_fd, resp->mesg, MAX_RESP, 0) == -1) {
                     perror("send error");

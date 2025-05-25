@@ -30,8 +30,9 @@ void* routine(void* arg) {
         }
     }
 
-    while (add_client(&cli, cli_data) == false);
-    sleep(1);
+    while (add_client(&cli, cli_data) == false) {
+        sleep(1);
+    }
 
     char buffer[MAX_RECV];
     memset(buffer, 0, sizeof buffer);
@@ -90,6 +91,10 @@ bool name_free(client* cli, clients_data* cli_data) {
         return false;
     }
 
+    if (cli_data->count == 0) {
+        return true;
+    }
+
     for (int i = 0; i <= cli_data->count - 1; i++) {
         if (strcmp(cli->name, cli_data->clients[i]->name) == 0) {
             return false;
@@ -112,8 +117,8 @@ bool get_name(client* cli) {
         return false;
     }
 
-    if ((bytes_recv = sizeof cli->name) && (cli->name[bytes_recv - 1] != '\n')) {
-        req = "max name len 31 chars!\n";
+    if (bytes_recv == MAX_NAME - 1 && cli->name[MAX_NAME - 1] != '\n') {
+        req = "max name len 31 chars!";
         if (send(cli->sock_fd, req, strlen(req), 0) == -1) {
             perror("send error\n");
             return false;
@@ -131,7 +136,7 @@ bool add_client(client* cli, clients_data* cli_data) {
         cli_data->clients[cli_data->count - 1] = cli;
         pthread_mutex_unlock(&cli_data->lock);
     } else {
-        char* req = "server full try again later!\n";
+        char* req = "server full try again later!";
         if (send(cli->sock_fd, req, strlen(req), 0) == -1) {
             pthread_mutex_unlock(&cli_data->lock);
             perror("send error");

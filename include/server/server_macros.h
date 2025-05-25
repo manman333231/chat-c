@@ -5,7 +5,7 @@
 #define MAX_CLIENTS 64
 #define MAX_MESG 96
 #define MAX_RECV 128
-#define MAX_RESP 128
+#define MAX_RESP 129
 
 // error mesgs
 

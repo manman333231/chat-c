@@ -19,7 +19,7 @@ void* routine(void* arg) {
     while (1) {
         memset(send_buffer, 0, sizeof send_buffer);
         fgets(send_buffer, sizeof send_buffer, stdin);
-        if (send(servfd, send_buffer, sizeof send_buffer, 0) == -1) {
+        if (send(servfd, send_buffer, strlen(send_buffer), 0) == -1) {
             perror("send error");
         }
     }
@@ -37,7 +37,6 @@ int main() {
     }
 
     pthread_t tid;
-    printf("%d", servfd);
     int* servfd_ptr = calloc(1, sizeof(int));
     *servfd_ptr = servfd;
     if (pthread_create(&tid, NULL, routine, (void*) servfd_ptr) != 0) {
@@ -50,7 +49,7 @@ int main() {
         return 1;
     }
 
-    char recv_buffer[128];
+    char recv_buffer[129];
     memset(recv_buffer, 0, sizeof recv_buffer);
 
     int bytes_recv;
