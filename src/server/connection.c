@@ -130,15 +130,14 @@ bool get_name(client* cli) {
 }
 
 bool add_client(client* cli, clients_data* cli_data) {
-    pthread_mutex_lock(&cli_data->lock);
     if (cli_data->count < MAX_CLIENTS) {
+        pthread_mutex_lock(&cli_data->lock);
         cli_data->count++;
         cli_data->clients[cli_data->count - 1] = cli;
         pthread_mutex_unlock(&cli_data->lock);
     } else {
         char* req = "server full try again later!";
         if (send(cli->sock_fd, req, strlen(req), 0) == -1) {
-            pthread_mutex_unlock(&cli_data->lock);
             perror("send error");
             return false;
         }
@@ -154,20 +153,21 @@ void remove_client(client* cli, clients_data* cli_data) {
     }
 
     bool in_clients = false;
-    pthread_mutex_lock(&cli_data->lock);
     for (int i = 0; i <= cli_data->count - 1; i++) {
         if (strcmp(cli->name, cli_data->clients[i]->name) == 0) {
             in_clients = true;
         }
 
         if (in_clients == true && i < cli_data->count - 1) {
+            pthread_mutex_lock(&cli_data->lock);
             cli_data->clients[i] = cli_data->clients[i + 1];
+            pthread_mutex_unlock(&cli_data->lock);
         }
     }
 
     if (in_clients == true) {
+        pthread_mutex_lock(&cli_data->lock);
         cli_data->clients[--cli_data->count] = NULL;
+        pthread_mutex_unlock(&cli_data->lock);
     }
-
-    pthread_mutex_unlock(&cli_data->lock);
 }
